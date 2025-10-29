@@ -1,0 +1,56 @@
+{% extends "design/todo.html" %}
+
+{% block title %}
+  Home - Django App
+{% endblock %}
+
+{% block content %}
+  <style>
+    /* 🔹 Minimal custom style */
+    body {
+      background-color: #e2e2e2;
+    }
+
+    .card-custom {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card-custom:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-modern {
+      background-color: #3fdfff;
+      border-radius: 50px;
+      border: none;
+      padding: 10px 25px;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .btn-modern:hover {
+      background-color: #38c9e6;
+    }
+  </style>
+
+  <div class="container d-flex justify-content-center align-items-center mt-5">
+    <div class="card-custom p-5 text-center w-75">
+      <h1 class="mb-3" style="font-weight: 600;">Archive List</h1>
+      <p class="lead text-muted">
+        This is your Django app’s home section.  
+        Explore and enjoy the features of your project.
+      </p>
+      <hr class="my-4" />
+      <p>Use the navigation bar above to move between sections.</p>
+
+      <!-- 🔹 Modern button -->
+      <a class="btn btn-modern mt-3" href="{% url 'todo' %}" role="button">
+        Get Started
+      </a>
+    </div>
+  </div>
+{% endblock %}

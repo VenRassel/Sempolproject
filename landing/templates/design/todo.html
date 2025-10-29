@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Django Project{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #e2e2e2;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .navbar {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin: 1rem auto;
+            width: 90%;
+            background-color: white !important;
+        }
+        .navbar-brand {
+            font-weight: 600;
+        }
+        .nav-link {
+            color: #333 !important;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            background-color: #007bff;
+            color: #fff !important;
+        }
+        .content-box {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            padding: 2rem;
+            width: 90%;
+            margin: 2rem auto;
+        }
+        .btn-primary {
+            border-radius: 10px;
+            padding: 0.6rem 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="{% url 'home' %}">My Django Project</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'todo' %}">Todo</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'list' %}">Archive</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="content-box">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

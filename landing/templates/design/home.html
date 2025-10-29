@@ -1,0 +1,110 @@
+{% extends "design/todo.html" %}
+
+{% block title %}
+  Todo List
+{% endblock %}
+
+{% block content %}
+<style>
+  body { background-color: #e2e2e2; }
+  .todo-container {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 500px;
+    margin: 2rem auto;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+  .todo-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  .todo-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+  }
+  .todo-input button {
+    background-color: #3fdfff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .todo-input button:hover { background-color: #38c9e6; }
+  .todo-list { list-style: none; padding: 0; }
+  .todo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .todo-actions button {
+    background: none;
+    border: none;
+    color: #8e4bff;
+    cursor: pointer;
+    margin-left: -5px;
+  }
+  .todo-actions button:hover { color: #5e2dbf; }
+  .archived { text-decoration: line-through; color: gray; }
+</style>
+
+<div class="todo-container">
+  <h3 class="text-center mb-3">My Todo List</h3>
+
+  <!-- Add Todo -->
+  <form method="POST" action="{% url 'add_task' %}" class="todo-input">
+    {% csrf_token %}
+    <input type="text" name="task_name" placeholder="Enter Todo" required>
+    <button type="submit">Add</button>
+  </form>
+
+  <!-- Validation Messages -->
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <!-- Todo List -->
+  <ul class="todo-list">
+    {% for task in tasks %}
+      <li class="todo-item {% if task.archived %}archived{% endif %}">
+        <span>{{ task.name }}</span>
+        <div class="todo-actions">
+          <!-- Archive -->
+          <form method="POST" action="{% url 'toggle_archive' task.id %}">
+            {% csrf_token %}
+            <button type="submit" title="Archive/Unarchive">
+              {% if task.archived %}🔓{% else %}📦{% endif %}
+            </button>
+          </form>
+
+          <!-- Edit -->
+          <a href="{% url 'edit_task' task.id %}" title="Edit">✏️</a>
+
+          <!-- Delete -->
+          <form method="POST" action="{% url 'delete_task' task.id %}">
+            {% csrf_token %}
+            <button type="submit" title="Delete">🗑️</button>
+          </form>
+        </div>
+      </li>
+    {% empty %}
+      <li>No tasks yet. Add one!</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
