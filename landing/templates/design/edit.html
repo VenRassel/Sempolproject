@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Task</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    body { background-color: #e2e2e2; font-family: 'Segoe UI', sans-serif; transition: background-color .25s ease, color .25s ease; }
+    .navbar { border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin: 1rem auto; width: 90%; background-color: white !important; }
+    .navbar-brand { font-weight: 600; }
+    .nav-link { color: #333 !important; border-radius: 8px; transition: all 0.2s ease-in-out; }
+    .nav-link:hover { background-color: #007bff; color: #fff !important; }
+    .content-box { background: white; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding: 2rem; width: 90%; margin: 2rem auto; transition: background-color .25s ease, box-shadow .25s ease; }
+    .edit-container { background: white; border-radius: 16px; padding: 2rem; width: 500px; margin: 2rem auto; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); transition: background-color .25s ease, box-shadow .25s ease; }
+    .edit-actions { display: flex; gap: 10px; }
+    .btn-primary { border-radius: 8px; background-color: #2563eb; border-color: #2563eb; transition: background-color .2s ease, box-shadow .2s ease; }
+    .btn-primary:hover { background-color: #1d4ed8; border-color: #1d4ed8; box-shadow: 0 6px 14px rgba(29,78,216,0.35); }
+    .btn-light { border-radius: 8px; background-color: #f3f4f6; border-color: #e5e7eb; color: #111827; }
+    .btn-light:hover { background-color: #e5e7eb; }
+    input[type="text"] { border-radius: 8px; }
+    label { font-weight: 600; }
+
+    /* Theme toggle pill */
+    .theme-toggle { display: inline-flex; align-items: center; gap: .5rem; border-radius: 999px; padding: .35rem .75rem; border: 1px solid #d1d5db; background: #ffffff; color: #111827; cursor: pointer; transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease; }
+    .theme-toggle:hover { box-shadow: 0 6px 14px rgba(0,0,0,0.1); }
+    .theme-toggle .icon { font-size: 1rem; line-height: 1; display: inline-block; width: 1.1rem; text-align: center; }
+    .theme-toggle .label { font-size: .875rem; font-weight: 600; }
+
+    /* Dark theme overrides */
+    [data-theme="dark"] body { background-color: #0f1115; color: #e5e7eb; }
+    [data-theme="dark"] .navbar { background-color: #1f2430 !important; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+    [data-theme="dark"] .nav-link { color: #e5e7eb !important; }
+    [data-theme="dark"] .nav-link:hover { background-color: #2563eb; color: #fff !important; }
+    [data-theme="dark"] .content-box { background: #161a22; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+    [data-theme="dark"] .edit-container { background: #1b2030; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+    [data-theme="dark"] .btn-primary { background-color: #3b82f6; border-color: #3b82f6; }
+    [data-theme="dark"] .btn-primary:hover { background-color: #2563eb; border-color: #2563eb; box-shadow: 0 6px 14px rgba(37,99,235,0.45); }
+    [data-theme="dark"] .btn-light { background-color: #2a3142; color: #e5e7eb; border-color: #374151; }
+    [data-theme="dark"] .btn-light:hover { background-color: #353c4e; }
+    [data-theme="dark"] input[type="text"] { background-color: #0f1523; color: #e5e7eb; border-color: #334155; }
+    [data-theme="dark"] label { color: #e5e7eb; }
+    [data-theme="dark"] .theme-toggle { background: #232939; color: #e5e7eb; border-color: #374151; }
+    [data-theme="dark"] .theme-toggle:hover { box-shadow: 0 6px 14px rgba(0,0,0,0.35); }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="navbar-brand d-flex align-items-center">
+      <a class="mr-2" href="{% url 'home' %}">My Django Project</a>
+      <button id="themeToggle" class="theme-toggle ml-2" type="button">
+        <span class="icon" aria-hidden="true">🌙</span>
+        <span class="label">Dark</span>
+      </button>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'archived_tasks' %}">Archive</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="content-box">
+    <div class="edit-container">
+      <h3 class="mb-3">Edit Task</h3>
+      <form method="POST">
+        {% csrf_token %}
+        {% if request.GET.next %}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% endif %}
+        <div class="form-group">
+          <label for="name">Task Name</label>
+          <input id="name" name="name" type="text" class="form-control" value="{{ task.name }}" required>
+        </div>
+        <div class="edit-actions mt-3">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="{% if request.GET.next %}{{ request.GET.next }}{% else %}{% url 'home' %}{% endif %}" class="btn btn-light">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function() {
+      function setTheme(next) {
+        if (next === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        // Reflect state on toggle button
+        var btn = document.getElementById('themeToggle');
+        if (btn) {
+          var icon = btn.querySelector('.icon');
+          var label = btn.querySelector('.label');
+          if (document.documentElement.getAttribute('data-theme') === 'dark') {
+            if (icon) icon.textContent = '🌞';
+            if (label) label.textContent = 'Light';
+          } else {
+            if (icon) icon.textContent = '🌙';
+            if (label) label.textContent = 'Dark';
+          }
+        }
+      }
+      var btn = document.getElementById('themeToggle');
+      if (btn) {
+        btn.addEventListener('click', function() {
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          setTheme(isDark ? 'light' : 'dark');
+        });
+        // Initialize correct label/icon on load based on saved theme
+        var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        setTheme(current);
+      }
+    })();
+  </script>
+</body>
+</html>
